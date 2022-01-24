@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/01/23 20:20:54 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/01/24 17:01:59 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,43 +71,71 @@ void	*live(void *args)
 	if (table->philosopher.name % 2 == 0)
 		usleep(500);
 	int time_think = table->philosopher.time_eat - table->philosopher.time_sleap;
+	long time = 0;
+	long time1 = 0;
+	long time_start_think = 0;
+	int i = 0;
 	while (1)
 	{
 		//pthread_mutex_lock(&entry_point);
-		pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
-		gettimeofday(&tv, DST_NONE);
-		//time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		printf("%lld %d has taken a fork\n",  tv.tv_sec * 1000 + tv.tv_usec/1000, table->philosopher.name);
-		//usleep(500);
-		pthread_mutex_lock(&table->forks[table->philosopher.right_fork]);
-		//gettimeofday(&tv, DST_NONE);
-		//time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		printf("%lld %d has taken a fork\n",  tv.tv_sec * 1000 + tv.tv_usec/1000, table->philosopher.name);
-		//usleep(500);
-		//pthread_mutex_unlock(&entry_point);
-		if (table->philosopher.last_eat == 0)
-			table->philosopher.last_eat = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		gettimeofday(&tv, DST_NONE);
-		//time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		printf("from eat %dms, for %d\n", tv.tv_sec * 1000 + tv.tv_usec/1000 - table->philosopher.last_eat, table->philosopher.name);	
-		if (tv.tv_sec * 1000 + tv.tv_usec/1000 - table->philosopher.last_eat <= table->philosopher.time_death)
-			printf("%lld %d is eating\n",  tv.tv_sec * 1000 + tv.tv_usec/1000, table->philosopher.name);
+		if (i == 0)
+		{
+			pthread_mutex_lock(&entry_point);
+			gettimeofday(&tv, DST_NONE);
+			time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
+			printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
+			gettimeofday(&tv, DST_NONE);
+			time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			pthread_mutex_lock(&table->forks[table->philosopher.right_fork]);
+			printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
+			table->philosopher.last_eat = time;
+			pthread_mutex_unlock(&entry_point);
+		}
 		else
 		{
-			printf("%lld %d died\n",  tv.tv_sec * 1000 + tv.tv_usec/1000, table->philosopher.name);
+			pthread_mutex_lock(&entry_point);
+			gettimeofday(&tv, DST_NONE);
+			time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
+			printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
+			gettimeofday(&tv, DST_NONE);
+			time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			pthread_mutex_lock(&table->forks[table->philosopher.right_fork]);
+			printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
+			pthread_mutex_unlock(&entry_point);
+		}
+		// pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
+		// printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
+		// pthread_mutex_lock(&table->forks[table->philosopher.right_fork]);
+		// printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
+		//usleep(500);
+		//pthread_mutex_unlock(&entry_point);
+		
+		// gettimeofday(&tv, DST_NONE);
+		// time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+		printf("from eat %dms, for %d\n", time - table->philosopher.last_eat, table->philosopher.name);	
+		if ((time - table->philosopher.last_eat) <= table->philosopher.time_death)
+			printf("%lld %d is eating\n",  time, table->philosopher.name);
+		else
+		{
+			printf("%lld %d died\n",  time, table->philosopher.name);
 			exit(0);
 		}
-		table->philosopher.last_eat = tv.tv_sec * 1000 + tv.tv_usec/1000;
 		usleep(table->philosopher.time_eat * 1000);
+		table->philosopher.last_eat = time;
+		time += table->philosopher.time_eat;
 		pthread_mutex_unlock(&table->forks[table->philosopher.right_fork]);
 		pthread_mutex_unlock(&table->forks[table->philosopher.left_fork]);
-		gettimeofday(&tv, DST_NONE);
-		//time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		printf("%lld %d is sleeping\n", tv.tv_sec * 1000 + tv.tv_usec/1000, table->philosopher.name);
+	
+			
+		printf("%lld %d is sleeping\n", time, table->philosopher.name);
 		usleep(table->philosopher.time_sleap * 1000);
+		time += table->philosopher.time_sleap;
 		gettimeofday(&tv, DST_NONE);
-		//time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		printf("%lld %d is thinking\n",  tv.tv_sec * 1000 + tv.tv_usec/1000, table->philosopher.name);
+		time_start_think = time;
+		printf("%lld %d is thinking\n",  time, table->philosopher.name);
+		i++;
 	}
 	return (NULL);
 }
