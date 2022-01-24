@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/01/24 17:01:59 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/01/24 17:20:18 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	*live(void *args)
 		}
 		else
 		{
-			pthread_mutex_lock(&entry_point);
+			//pthread_mutex_lock(&entry_point);
 			gettimeofday(&tv, DST_NONE);
 			time = tv.tv_sec * 1000 + tv.tv_usec/1000;
 			pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
@@ -103,7 +103,12 @@ void	*live(void *args)
 			time = tv.tv_sec * 1000 + tv.tv_usec/1000;
 			pthread_mutex_lock(&table->forks[table->philosopher.right_fork]);
 			printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
-			pthread_mutex_unlock(&entry_point);
+			//pthread_mutex_unlock(&entry_point);
+			if ((time - table->philosopher.last_eat > table->philosopher.time_death) && (time - time_start_think > 0))
+			{
+				time --;
+				printf("%lld %d PROB\n",  time, table->philosopher.name);
+			}
 		}
 		// pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
 		// printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
