@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/01/25 18:30:40 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/01/25 19:46:35 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,8 @@ void	*live(void *args)
 		
 
 		
-		printf("from eat %dms, for %d\n", (time/10 - table->philosopher.last_eat/10)*10, table->philosopher.name);	
-		if ((time/10 - table->philosopher.last_eat/10)* 10 <= table->philosopher.time_death)
+		printf("from eat %dms, for %d\n", time - table->philosopher.last_eat, table->philosopher.name);	
+		if ((time - table->philosopher.last_eat) <= table->philosopher.time_death)
 			printf("%lld %d is eating\n",  time, table->philosopher.name);
 		else
 		{
@@ -150,7 +150,7 @@ void	*live(void *args)
 			
 		printf("%lld %d is sleeping\n", time, table->philosopher.name);
 		//usleep(table->philosopher.time_sleap * 1000);
-		usleep(table->philosopher.time_sleap * 1000);
+		castom_usleep(table->philosopher.time_sleap);
 		time += table->philosopher.time_sleap;
 		printf("%lld %d is thinking\n",  time, table->philosopher.name);
 		i++;
