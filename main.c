@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/01/25 17:44:45 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/01/25 17:52:05 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	*live(void *args)
 	table = (t_table *)args;
 	//time = 0;
 	if (table->philosopher.name % 2 == 0)
-		usleep(500);
+		usleep(500 + table->philosopher.name*100);
 	int time_think = 0;
 	long time = 0;
 	long time1 = 0;
@@ -91,7 +91,7 @@ void	*live(void *args)
 		//pthread_mutex_lock(&entry_point);
 	
 			
-			//pthread_mutex_lock(&entry_point);
+			pthread_mutex_lock(&entry_point);
 			if (table->philosopher.right_fork > table->philosopher.left_fork)
 			{
 				pthread_mutex_lock(&table->forks[table->philosopher.left_fork]);
@@ -116,7 +116,7 @@ void	*live(void *args)
 				time = tv.tv_sec * 1000 + tv.tv_usec/1000;
 				printf("%lld %d has taken a fork\n",  time, table->philosopher.name);
 			}
-			//pthread_mutex_unlock(&entry_point);
+			pthread_mutex_unlock(&entry_point);
 			
 			if (table->philosopher.last_eat == 0)
 				table->philosopher.last_eat = time;
