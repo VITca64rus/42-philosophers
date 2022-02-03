@@ -6,10 +6,11 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/03 15:17:03 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/03 15:57:33 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+// NEW
 #include "ft_philosophers.h"
 pthread_t 		*threads;
 
