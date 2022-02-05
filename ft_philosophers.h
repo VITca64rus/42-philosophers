@@ -10,22 +10,26 @@
 
 typedef struct s_philosof
 {
-	struct s_table	*table;
 	int			name;
-	long long	time_eat;
-	long long	time_sleap;
-	long long	time_death;
-	long long	last_eat;
+	long		time_eat;
+	long		time_sleap;
+	long		time_death;
+	long		last_eat;
 	unsigned	left_fork;
 	unsigned	right_fork;
+	long		time;
+	bool			stop;
+	pthread_mutex_t	*forks;
 }	t_philos;
 
-typedef struct s_table
+
+typedef struct s_data
 {
-	t_philos		philosopher;
+	t_philos		*philosophers;
 	pthread_mutex_t	*forks;
-	bool			stop;
-}	t_table;
+	int				count;
+}	t_data;
+
 
 pthread_mutex_t entry_point = PTHREAD_MUTEX_INITIALIZER;
 
