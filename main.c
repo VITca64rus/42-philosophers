@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/05 14:53:56 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/05 15:29:20 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,29 +206,30 @@ void	*moni(void *args)
 	{
 		if ((data->philosophers[i].time - data->philosophers[i].last_eat > data->philosophers[i].time_death) && (data->philosophers[i].last_eat != 0) && (data->philosophers[i].time != 0) && (data->philosophers[i].last_eat != data->philosophers[i].time))
 		{
-			printf("%lld %d died\n",  data->philosophers[i].time - time_start, data->philosophers[i].name);
+			pthread_mutex_lock(&entry_point);
+			//printf("%lld %d died\n",  data->philosophers[i].time - time_start, data->philosophers[i].name);
 			data->philosophers[i].stop = true;
+			//pthread_mutex_lock(&entry_point);
 			while (j < data->count)
 			{
 				data->philosophers[j].stop = true;
 				j++;
 			}
+			printf("%lld %d died\n",  data->philosophers[i].time - time_start, data->philosophers[i].name);
+			 pthread_mutex_unlock(&entry_point);
+			// pthread_mutex_lock(&entry_point);
 			break;
 		}
 		i++;
 		if (i == data->count - 1)
 			i = 0;
 	}
-	//printf("%lld %d died\n",  data->philosophers[i].time- time_start, data->philosophers[i].name);
 	i = 0;
 	while (i < data->count)
 	{
-		//data->philosophers[i].stop = true;
-		//pthread_mutex_unlock(&data->forks[i]);
 		pthread_mutex_destroy(&data->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&entry_point);
 	return(NULL);
 }
 
