@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/05 13:34:23 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/05 14:13:44 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,6 @@ void	*live(void *args)
 				pthread_mutex_unlock(&philo->forks[philo->left_fork]);
 				pthread_mutex_unlock(&philo->forks[philo->right_fork]);
 			}
-		
 		philo->last_eat = philo->time;
 		philo->time += philo->time_eat;
 		if (philo->stop)
@@ -169,7 +168,6 @@ void	*live(void *args)
 			pthread_mutex_lock(&entry_point);
 		printf("%lld %d is sleeping\n", philo->time- time_start, philo->name);
 		pthread_mutex_unlock(&entry_point);
-		//usleep(table->philosopher.time_sleap * 1000);
 		castom_usleep(philo->time_sleap);
 		philo->time += philo->time_sleap;
 		if (philo->stop)
@@ -191,18 +189,12 @@ void	*moni(void *args)
 	
 	data = (t_data *)args;
 	printf("MONI\n");
-	 usleep(1000);
 	while (1)
 	{
-		// gettimeofday(&tv, NULL);
-		// time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		//printf("find %ld > %ld\n", data->philosophers->time - data->philosophers->last_eat, data->philosophers->time_death);
-		//printf("find %ld - %ld = %ld > %ld\n", data->philosophers[i].time, data->philosophers[i].last_eat, data->philosophers[i].time - data->philosophers[i].last_eat, data->philosophers[i].time_death);
-		if ((data->philosophers[i].time - data->philosophers[i].last_eat > data->philosophers[i].time_death) && (data->philosophers[i].last_eat != 0) && (data->philosophers[i].time != 0))
+		if ((data->philosophers[i].time - data->philosophers[i].last_eat > data->philosophers[i].time_death) && (data->philosophers[i].last_eat != 0) && (data->philosophers[i].time != 0) && (data->philosophers[i].last_eat != data->philosophers[i].time))
 		{
 			printf("find %ld - %ld = %ld > %ld\n", data->philosophers[i].time, data->philosophers[i].last_eat, data->philosophers[i].time - data->philosophers[i].last_eat, data->philosophers[i].time_death);
 			data->philosophers[i].stop = true;
-			//pthread_mutex_lock(&entry_point);
 			break;
 		}
 		i++;
@@ -250,11 +242,10 @@ int	main(int argc, char **argv)
 	data->count = ft_atoi(argv[1]);
 	data->forks = forks;
 	data->philosophers = philosophers;
-	
+
 	threads = (pthread_t *)malloc(sizeof(pthread_t) * ft_atoi(argv[1])); //CHECK FIX_ME
 
 	pthread_create(&monitor, NULL, moni, data);
-	//pthread_detach(monitor);
 	i = 0;
 	while (i < ft_atoi(argv[1]))
 	{
