@@ -19,6 +19,8 @@ typedef struct s_philosof
 	unsigned	right_fork;
 	long		time;
 	bool			stop;
+	int			count_eat;
+	int			now_count_eat;
 	pthread_mutex_t	*forks;
 }	t_philos;
 
