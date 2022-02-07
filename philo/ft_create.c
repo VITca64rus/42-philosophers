@@ -17,7 +17,7 @@ pthread_mutex_t *ft_create_forks(int count)
 	return (forks);
 }
 
-t_philos	*ft_create_philosophers(int count, pthread_mutex_t *forks, char **argv, int argc)
+t_philos	*ft_create_philosophers(int count, pthread_mutex_t *forks, char **argv, int argc, pthread_mutex_t *entry_point)
 {
 	t_philos	*philosophers;
 	int			i;
@@ -48,6 +48,7 @@ t_philos	*ft_create_philosophers(int count, pthread_mutex_t *forks, char **argv,
 			philosophers[i].count_eat = ft_atoi(argv[5]);
 		else
 			philosophers[i].count_eat = 0;
+		philosophers[i].entry_point = entry_point;
 		i++;
 		j++;
 	}
