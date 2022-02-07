@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/07 14:31:49 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/07 16:25:06 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,79 +98,49 @@ void	*live(void *args)
 	{
 			if (philo->right_fork > philo->left_fork)
 			{
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&philo->forks[philo->left_fork]);
 				gettimeofday(&tv, NULL);
 				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&entry_point);
 				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
 				pthread_mutex_unlock(&entry_point);
-			
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&philo->forks[philo->right_fork]);
 				gettimeofday(&tv, NULL);
 				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&entry_point);
 				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
 				pthread_mutex_unlock(&entry_point);
 			}
 			else
 			{
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&philo->forks[philo->right_fork]);
 				gettimeofday(&tv, NULL);
 				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&entry_point);
 				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
 				pthread_mutex_unlock(&entry_point);
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&philo->forks[philo->left_fork]);
 				gettimeofday(&tv, NULL);
 				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				if (philo->stop)
-					break ;
 				pthread_mutex_lock(&entry_point);
 				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
 				pthread_mutex_unlock(&entry_point);
 			}
-		//	pthread_mutex_unlock(&entry_point);
 			
 			if (philo->last_eat == 0)
 				philo->last_eat = philo->time;
-			//time_think = time - time1;
 		
-		
-		
-		
-		//printf("from eat %dms, for %d\n", philo->time - philo->last_eat , philo->name);	
-		//if ((philo->time - philo->last_eat) <= philo->time_death)
-		//{
 			if (philo->stop)
 				break ;
-			pthread_mutex_lock(&entry_point);
 			philo->last_eat = philo->time;
-			if (philo->stop)
-				break ;
+			pthread_mutex_lock(&entry_point);
 			printf("%lld %d is eating\n",  philo->time- time_start, philo->name);	
 			pthread_mutex_unlock(&entry_point);
 
-		if (philo->stop)
-			break ;
 		castom_usleep(philo->time_eat);
-		philo->now_count_eat++;
 		philo->time += philo->time_eat;
-			if (philo->stop)
-				break ;
+		//printf("FINISH EATING %d\n", philo->name);
+			
 			if (philo->right_fork > philo->left_fork)
 			{
 				pthread_mutex_unlock(&philo->forks[philo->right_fork]);
@@ -181,28 +151,29 @@ void	*live(void *args)
 				pthread_mutex_unlock(&philo->forks[philo->left_fork]);
 				pthread_mutex_unlock(&philo->forks[philo->right_fork]);
 			}
-			//printf("%lld %d put all forks\n",  philo->time- time_start, philo->name);	
+		//printf("%lld %d put all forks\n",  philo->time- time_start, philo->name);	
 		//philo->last_eat = philo->time;
-		
+		if (philo->now_count_eat < philo->count_eat)
+			philo->now_count_eat++;
+			
 		if (philo->stop)
 			break ;
+		//printf("BEFORE BLOCK ENTRY %d\n", philo->name);
 		pthread_mutex_lock(&entry_point);
+		//printf("BLOCK ENTRY %d\n", philo->name);
 		printf("%lld %d is sleeping\n", philo->time- time_start, philo->name);
 		pthread_mutex_unlock(&entry_point);
-		if (philo->stop)
-			break ;
+		//printf("FREE ENTRY %d\n", philo->name);
 		castom_usleep(philo->time_sleap);
 		philo->time += philo->time_sleap;
 		if (philo->stop)
 			break ;
 		pthread_mutex_lock(&entry_point);
-		if (philo->stop)
-			break ;
 		printf("%lld %d is thinking\n",  philo->time- time_start, philo->name);
 		pthread_mutex_unlock(&entry_point);
 		i++;
 	}
-	printf("STOP FILO %d\n", philo->name);
+	//printf("STOP FILO %d\n", philo->name);
 	return (NULL);
 }
 
@@ -254,7 +225,7 @@ void	*moni(void *args)
 
 		if (data->philosophers[i].count_eat <= data->philosophers[i].now_count_eat && data->philosophers[i].count_eat != 0)
 		{
-			//pthread_mutex_lock(&entry_point);
+			pthread_mutex_lock(&entry_point);
 			j = 0;
 			while (j < data->count)
 			{
@@ -267,7 +238,7 @@ void	*moni(void *args)
 			if (j >= data->count)
 			{
 				//pthread_mutex_lock(&entry_point);
-				data->philosophers[i].stop = true;
+				//data->philosophers[i].stop = true;
 				//pthread_mutex_lock(&entry_point);
 				j = 0;
 				while (j < data->count)
@@ -277,10 +248,11 @@ void	*moni(void *args)
 				}
 				
 				//printf("%lld eat full\n",  time - time_start);
-				//pthread_mutex_unlock(&entry_point);
+				pthread_mutex_unlock(&entry_point);
 				break;
+			//return(NULL);
 			}
-			//pthread_mutex_unlock(&entry_point);
+			pthread_mutex_unlock(&entry_point);
 		}
 		i++;
 		if (i == data->count - 1)
@@ -288,14 +260,18 @@ void	*moni(void *args)
 	}
 	}
 	i = 0;
+	//printf("start clear forks\n");
 	while (i < data->count)
 	{
+		//pthread_mutex_lock(&data->forks[i]);
 		pthread_mutex_unlock(&data->forks[i]);
 		pthread_mutex_destroy(&data->forks[i]);
 		i++;
 	}
-	pthread_mutex_unlock(&entry_point);
-	pthread_mutex_destroy(&entry_point);
+	//printf("start clear entry\n");
+	//pthread_mutex_unlock(&entry_point);
+	//pthread_mutex_destroy(&entry_point);
+	//printf("finish MONI\n");
 	return(NULL);
 }
 
