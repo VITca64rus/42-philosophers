@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/07 14:01:07 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:31:49 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,11 +164,11 @@ void	*live(void *args)
 			printf("%lld %d is eating\n",  philo->time- time_start, philo->name);	
 			pthread_mutex_unlock(&entry_point);
 
-	if (philo->stop)
-		break ;
+		if (philo->stop)
+			break ;
 		castom_usleep(philo->time_eat);
-		philo->time += philo->time_eat;
 		philo->now_count_eat++;
+		philo->time += philo->time_eat;
 			if (philo->stop)
 				break ;
 			if (philo->right_fork > philo->left_fork)
@@ -181,7 +181,7 @@ void	*live(void *args)
 				pthread_mutex_unlock(&philo->forks[philo->left_fork]);
 				pthread_mutex_unlock(&philo->forks[philo->right_fork]);
 			}
-			printf("%lld %d put all forks\n",  philo->time- time_start, philo->name);	
+			//printf("%lld %d put all forks\n",  philo->time- time_start, philo->name);	
 		//philo->last_eat = philo->time;
 		
 		if (philo->stop)
@@ -254,7 +254,7 @@ void	*moni(void *args)
 
 		if (data->philosophers[i].count_eat <= data->philosophers[i].now_count_eat && data->philosophers[i].count_eat != 0)
 		{
-			pthread_mutex_lock(&entry_point);
+			//pthread_mutex_lock(&entry_point);
 			j = 0;
 			while (j < data->count)
 			{
@@ -275,12 +275,12 @@ void	*moni(void *args)
 					data->philosophers[j].stop = true;
 					j++;
 				}
-				pthread_mutex_unlock(&entry_point);
-				printf("%lld eat full\n",  time - time_start);
 				
+				//printf("%lld eat full\n",  time - time_start);
+				//pthread_mutex_unlock(&entry_point);
 				break;
 			}
-			pthread_mutex_unlock(&entry_point);
+			//pthread_mutex_unlock(&entry_point);
 		}
 		i++;
 		if (i == data->count - 1)
