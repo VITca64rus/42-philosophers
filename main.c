@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/07 16:25:06 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/07 16:50:20 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,62 +85,68 @@ void	*live(void *args)
 {
 	t_philos	*philo;
 	struct timeval tv;
-	//long time = 0;
 	int i = 0;
-	
 
 	philo = (t_philos *)args;
-	if (philo->name % 2 == 0)
-		usleep(500);
 	gettimeofday(&tv, NULL);
 	time_start = tv.tv_sec * 1000 + tv.tv_usec/1000;
+	philo->last_eat = time_start;
+	if (philo->name % 2 == 0)
+		usleep(500);
+	
 	while (!philo->stop)
 	{
-			if (philo->right_fork > philo->left_fork)
-			{
-				pthread_mutex_lock(&philo->forks[philo->left_fork]);
-				gettimeofday(&tv, NULL);
-				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				pthread_mutex_lock(&entry_point);
-				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
-				pthread_mutex_unlock(&entry_point);
-				pthread_mutex_lock(&philo->forks[philo->right_fork]);
-				gettimeofday(&tv, NULL);
-				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				pthread_mutex_lock(&entry_point);
-				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
-				pthread_mutex_unlock(&entry_point);
-			}
-			else
-			{
-				pthread_mutex_lock(&philo->forks[philo->right_fork]);
-				gettimeofday(&tv, NULL);
-				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				pthread_mutex_lock(&entry_point);
-				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
-				pthread_mutex_unlock(&entry_point);
-				pthread_mutex_lock(&philo->forks[philo->left_fork]);
-				gettimeofday(&tv, NULL);
-				philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-				pthread_mutex_lock(&entry_point);
-				printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
-				pthread_mutex_unlock(&entry_point);
-			}
+		if (philo->right_fork > philo->left_fork)
+		{
+			pthread_mutex_lock(&philo->forks[philo->left_fork]);
+			gettimeofday(&tv, NULL);
+			philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			if (philo->stop)
+				break ;
+			pthread_mutex_lock(&entry_point);
+			printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
+			pthread_mutex_unlock(&entry_point);
+			pthread_mutex_lock(&philo->forks[philo->right_fork]);
+			gettimeofday(&tv, NULL);
+			philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			if (philo->stop)
+				break ;
+			pthread_mutex_lock(&entry_point);
+			printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
+			pthread_mutex_unlock(&entry_point);
+		}
+		else
+		{
+			pthread_mutex_lock(&philo->forks[philo->right_fork]);
+			gettimeofday(&tv, NULL);
+			philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			if (philo->stop)
+				break ;
+			pthread_mutex_lock(&entry_point);
+			printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
+			pthread_mutex_unlock(&entry_point);
+			pthread_mutex_lock(&philo->forks[philo->left_fork]);
+			gettimeofday(&tv, NULL);
+			philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+			if (philo->stop)
+				break ;
+			pthread_mutex_lock(&entry_point);
+			printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
+			pthread_mutex_unlock(&entry_point);
+		}
 			
-			if (philo->last_eat == 0)
-				philo->last_eat = philo->time;
+			//if (philo->last_eat == 0)
+			//	philo->last_eat = philo->time;
 		
 			if (philo->stop)
 				break ;
 			philo->last_eat = philo->time;
 			pthread_mutex_lock(&entry_point);
-			printf("%lld %d is eating\n",  philo->time- time_start, philo->name);	
+			printf("%lld %d is eating\n",  philo->time - time_start, philo->name);	
 			pthread_mutex_unlock(&entry_point);
 
 		castom_usleep(philo->time_eat);
 		philo->time += philo->time_eat;
-		//printf("FINISH EATING %d\n", philo->name);
-			
 			if (philo->right_fork > philo->left_fork)
 			{
 				pthread_mutex_unlock(&philo->forks[philo->right_fork]);
@@ -151,19 +157,12 @@ void	*live(void *args)
 				pthread_mutex_unlock(&philo->forks[philo->left_fork]);
 				pthread_mutex_unlock(&philo->forks[philo->right_fork]);
 			}
-		//printf("%lld %d put all forks\n",  philo->time- time_start, philo->name);	
-		//philo->last_eat = philo->time;
-		if (philo->now_count_eat < philo->count_eat)
-			philo->now_count_eat++;
-			
+		philo->now_count_eat++;
 		if (philo->stop)
 			break ;
-		//printf("BEFORE BLOCK ENTRY %d\n", philo->name);
 		pthread_mutex_lock(&entry_point);
-		//printf("BLOCK ENTRY %d\n", philo->name);
 		printf("%lld %d is sleeping\n", philo->time- time_start, philo->name);
 		pthread_mutex_unlock(&entry_point);
-		//printf("FREE ENTRY %d\n", philo->name);
 		castom_usleep(philo->time_sleap);
 		philo->time += philo->time_sleap;
 		if (philo->stop)
@@ -173,7 +172,6 @@ void	*live(void *args)
 		pthread_mutex_unlock(&entry_point);
 		i++;
 	}
-	//printf("STOP FILO %d\n", philo->name);
 	return (NULL);
 }
 
