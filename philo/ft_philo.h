@@ -1,5 +1,5 @@
-#ifndef FT_PHILOSOPHERS_H
-# define FT_PHILOSOPHERS_H
+#ifndef FT_PHILO_H
+# define FT_PHILO_H
 
 # include <pthread.h>
 # include <stdlib.h>
@@ -18,7 +18,7 @@ typedef struct s_philosof
 	unsigned	left_fork;
 	unsigned	right_fork;
 	long		time;
-	bool			stop;
+	bool		stop;
 	int			count_eat;
 	int			now_count_eat;
 	pthread_mutex_t	*forks;
@@ -32,9 +32,8 @@ typedef struct s_data
 	int				count;
 }	t_data;
 
-
-pthread_mutex_t entry_point = PTHREAD_MUTEX_INITIALIZER;
-
 int	ft_atoi(const char *str);
+pthread_mutex_t *ft_create_forks(int count);
+t_philos	*ft_create_philosophers(int count, pthread_mutex_t *forks, char **argv, int argc);
 
 #endif
