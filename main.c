@@ -6,11 +6,10 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/07 16:50:20 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/07 17:26:56 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// NEW
 #include "ft_philosophers.h"
 
 pthread_mutex_t *ft_create_forks(int count)
@@ -134,10 +133,6 @@ void	*live(void *args)
 			printf("%lld %d has taken a fork\n",  philo->time - time_start, philo->name);
 			pthread_mutex_unlock(&entry_point);
 		}
-			
-			//if (philo->last_eat == 0)
-			//	philo->last_eat = philo->time;
-		
 			if (philo->stop)
 				break ;
 			philo->last_eat = philo->time;
@@ -184,13 +179,8 @@ void	*moni(void *args)
 	int count_not_want_eat;
 	
 	data = (t_data *)args;
-	printf("MONI\n");
 	int j = 0;
-	while (((1)) && (data->count != 1))
-	{
-		gettimeofday(&tv, NULL);
-		time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		
+	usleep(100);
 	if (data->count == 1)
 	{
 		pthread_mutex_lock(&entry_point);
@@ -202,74 +192,75 @@ void	*moni(void *args)
 		}
 		printf("%lld %d died\n",  data->philosophers[0].time_death, data->philosophers[0].name);
 	}
-	else
+	while (((1)) && (data->count != 1))
 	{
-		if ((time - data->philosophers[i].last_eat > data->philosophers[i].time_death) && (data->philosophers[i].last_eat != 0) && (data->philosophers[i].time != 0) && (data->philosophers[i].last_eat != data->philosophers[i].time))
+		gettimeofday(&tv, NULL); 
+		time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+		
+		if (data->count == 1)
 		{
 			pthread_mutex_lock(&entry_point);
-			//printf("%lld %d died\n",  data->philosophers[i].time - time_start, data->philosophers[i].name);
-			data->philosophers[i].stop = true;
-			//pthread_mutex_lock(&entry_point);
 			j = 0;
 			while (j < data->count)
 			{
 				data->philosophers[j].stop = true;
 				j++;
 			}
-			printf("%lld %d died\n",  time - time_start, data->philosophers[i].name);
-			pthread_mutex_unlock(&entry_point);
-			break;
+			printf("%lld %d died\n",  data->philosophers[0].time_death, data->philosophers[0].name);
 		}
-
-		if (data->philosophers[i].count_eat <= data->philosophers[i].now_count_eat && data->philosophers[i].count_eat != 0)
+		else
 		{
-			pthread_mutex_lock(&entry_point);
-			j = 0;
-			while (j < data->count)
+			if ((time - data->philosophers[i].last_eat > data->philosophers[i].time_death) && (data->philosophers[i].last_eat != 0) && (data->philosophers[i].time != 0) && (data->philosophers[i].last_eat != data->philosophers[i].time))
 			{
-				if (data->philosophers[j].count_eat <= data->philosophers[j].now_count_eat)
-					j++;
-				else
-					break;
-			}
-			//pthread_mutex_unlock(&entry_point);
-			if (j >= data->count)
-			{
-				//pthread_mutex_lock(&entry_point);
-				//data->philosophers[i].stop = true;
-				//pthread_mutex_lock(&entry_point);
+				pthread_mutex_lock(&entry_point);
+				data->philosophers[i].stop = true;
 				j = 0;
 				while (j < data->count)
 				{
 					data->philosophers[j].stop = true;
 					j++;
 				}
-				
-				//printf("%lld eat full\n",  time - time_start);
+				printf("%lld %d died\n",  time - time_start, data->philosophers[i].name);
 				pthread_mutex_unlock(&entry_point);
 				break;
-			//return(NULL);
 			}
-			pthread_mutex_unlock(&entry_point);
+
+			if (data->philosophers[i].count_eat <= data->philosophers[i].now_count_eat && data->philosophers[i].count_eat != 0)
+			{
+				pthread_mutex_lock(&entry_point);
+				j = 0;
+				while (j < data->count)
+				{
+					if (data->philosophers[j].count_eat <= data->philosophers[j].now_count_eat)
+						j++;
+					else
+						break;
+				}
+				if (j >= data->count)
+				{
+					j = 0;
+					while (j < data->count)
+					{
+						data->philosophers[j].stop = true;
+						j++;
+					}
+					pthread_mutex_unlock(&entry_point);
+					break;
+				}
+				pthread_mutex_unlock(&entry_point);
+			}
+			i++;
+			if (i == data->count - 1)
+				i = 0;
 		}
-		i++;
-		if (i == data->count - 1)
-			i = 0;
-	}
 	}
 	i = 0;
-	//printf("start clear forks\n");
 	while (i < data->count)
 	{
-		//pthread_mutex_lock(&data->forks[i]);
 		pthread_mutex_unlock(&data->forks[i]);
 		pthread_mutex_destroy(&data->forks[i]);
 		i++;
 	}
-	//printf("start clear entry\n");
-	//pthread_mutex_unlock(&entry_point);
-	//pthread_mutex_destroy(&entry_point);
-	//printf("finish MONI\n");
 	return(NULL);
 }
 
