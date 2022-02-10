@@ -40,6 +40,7 @@ t_philos	*ft_create_philosophers(int count, pthread_mutex_t *forks, char **argv,
 void	ft_put_forks(t_philos *philo);
 int		ft_eat(t_philos *philo);
 int		ft_sleap(t_philos *philo);
-void castom_usleep(long time);
+void 	castom_usleep(long time);
+int		ft_take_fork(t_philos *philo);
 
 #endif
