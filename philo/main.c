@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/10 11:56:35 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/10 13:21:42 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ void castom_usleep(long time)
 	time1 = tv.tv_sec * 1000 + tv.tv_usec/1000;
 	while (tv.tv_sec * 1000 + tv.tv_usec/1000 - time1 < time)
 	{
-		usleep(10);
+		usleep(100);
 		gettimeofday(&tv, NULL);
 	}
+	//printf("USLEEP = %ld\n", tv.tv_sec * 1000 + tv.tv_usec/1000 - time1);
 }
 
 void	*live(void *args)
@@ -89,6 +90,7 @@ void	*live(void *args)
 		//SLEAPING
 		if (ft_sleap(philo) == 0)
 			break;
+
 
 		//THINKING
 		if (philo->stop)
@@ -194,6 +196,34 @@ void	*moni(void *args)
 	return(NULL);
 }
 
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	else
+		return (0);
+}
+
+int	ft_check(int argc, char **argv)
+{
+	int i;
+	int j;
+
+	i = 1;
+	while (i < argc)
+	{
+		j = 0;
+		while (argv[i][j] != '\0')
+		{
+			if (ft_isdigit(argv[i][j]) == 0)
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	
@@ -204,9 +234,12 @@ int	main(int argc, char **argv)
 	pthread_t 		monitor;
 	pthread_mutex_t entry_point = PTHREAD_MUTEX_INITIALIZER;
 	int				i;
-
-	if (argc < 5 || argc > 6)
+	
+	if (argc < 5 || argc > 6 || ft_check(argc, argv) == 0)
+	{
+		printf("Error\n");
 		return (0);
+	}
 	forks = ft_create_forks(ft_atoi(argv[1]));
 	philosophers = ft_create_philosophers(ft_atoi(argv[1]), forks, argv, argc, &entry_point);
 	data = (t_data *)malloc(sizeof(data));
