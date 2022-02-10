@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/07 19:43:20 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/10 11:56:35 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void castom_usleep(long time)
 	time1 = tv.tv_sec * 1000 + tv.tv_usec/1000;
 	while (tv.tv_sec * 1000 + tv.tv_usec/1000 - time1 < time)
 	{
-		usleep(100);
+		usleep(10);
 		gettimeofday(&tv, NULL);
 	}
 }
@@ -155,8 +155,7 @@ void	*moni(void *args)
 				pthread_mutex_unlock(data->philosophers[i].entry_point);
 				break;
 			}
-
-			if (data->philosophers[i].count_eat <= data->philosophers[i].now_count_eat && data->philosophers[i].count_eat != 0)
+			else if (data->philosophers[i].count_eat <= data->philosophers[i].now_count_eat && data->philosophers[i].count_eat != 0)
 			{
 				pthread_mutex_lock(data->philosophers[i].entry_point);
 				j = 0;
