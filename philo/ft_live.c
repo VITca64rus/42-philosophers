@@ -34,6 +34,11 @@ int	ft_sleap(t_philos *philo)
 	if (philo->stop)
 		return (0);
 	pthread_mutex_lock(philo->entry_point);
+	if (philo->stop)
+	{
+		pthread_mutex_unlock(philo->entry_point);
+		return (0);
+	}
 	printf("%ld %d is sleeping\n", philo->time - philo->time_start, philo->name);
 	pthread_mutex_unlock(philo->entry_point);
 	castom_usleep(philo->time_sleap);
@@ -53,6 +58,11 @@ int	ft_take_fork(t_philos *philo)
 		if (philo->stop)
 			return(0);
 		pthread_mutex_lock(philo->entry_point);
+		if (philo->stop)
+	{
+		pthread_mutex_unlock(philo->entry_point);
+		return (0);
+	}
 		printf("%ld %d has taken a fork\n",  philo->time - philo->time_start, philo->name);
 		pthread_mutex_unlock(philo->entry_point);
 		pthread_mutex_lock(&philo->forks[philo->right_fork]);
@@ -61,6 +71,11 @@ int	ft_take_fork(t_philos *philo)
 		if (philo->stop)
 			return(0);
 		pthread_mutex_lock(philo->entry_point);
+		if (philo->stop)
+	{
+		pthread_mutex_unlock(philo->entry_point);
+		return (0);
+	}
 		printf("%ld %d has taken a fork\n",  philo->time - philo->time_start, philo->name);
 		pthread_mutex_unlock(philo->entry_point);
 	}
@@ -72,6 +87,11 @@ int	ft_take_fork(t_philos *philo)
 		if (philo->stop)
 			return(0);
 		pthread_mutex_lock(philo->entry_point);
+		if (philo->stop)
+	{
+		pthread_mutex_unlock(philo->entry_point);
+		return (0);
+	}
 		printf("%ld %d has taken a fork\n",  philo->time - philo->time_start, philo->name);
 		pthread_mutex_unlock(philo->entry_point);
 		pthread_mutex_lock(&philo->forks[philo->left_fork]);
@@ -80,6 +100,11 @@ int	ft_take_fork(t_philos *philo)
 		if (philo->stop)
 			return(0);
 		pthread_mutex_lock(philo->entry_point);
+		if (philo->stop)
+	{
+		pthread_mutex_unlock(philo->entry_point);
+		return (0);
+	}
 		printf("%ld %d has taken a fork\n",  philo->time - philo->time_start, philo->name);
 		pthread_mutex_unlock(philo->entry_point);
 	}
