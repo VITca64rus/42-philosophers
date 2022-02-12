@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/12 16:19:45 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/12 17:43:40 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	ft_threads(t_data	*data)
 		pthread_join(threads[i], NULL);
 		i++;
 	}
+	free(threads);
 }
 
 int	main(int argc, char **argv)
@@ -75,5 +76,10 @@ int	main(int argc, char **argv)
 	data->forks = ft_create_forks(data->count);
 	data->philosophers = ft_create_philosophers(data, argv, argc, &entry_point);
 	ft_threads(data);
+
+	pthread_mutex_destroy(&entry_point);
+	free(data->philosophers);
+	free(data->forks);
+	free(data);
 	return (0);
 }
