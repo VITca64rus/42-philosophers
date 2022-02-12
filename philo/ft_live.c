@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_live.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/12 15:48:34 by sazelda           #+#    #+#             */
+/*   Updated: 2022/02/12 15:54:56 by sazelda          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_philo.h"
 
 void	ft_put_forks(t_philos *philo)
@@ -23,7 +35,7 @@ int	ft_eat(t_philos *philo)
 		pthread_mutex_unlock(philo->entry_point);
 		return (0);
 	}
-	printf("%ld %d is eating\n",  philo->time - philo->time_start, philo->name);	
+	printf("%ld %d is eating\n", philo->time - philo->time_start, philo->name);
 	pthread_mutex_unlock(philo->entry_point);
 	castom_usleep(philo->time_eat);
 	philo->time += philo->time_eat;
@@ -47,32 +59,39 @@ int	ft_sleap(t_philos *philo)
 	return (1);
 }
 
+static void	ft_help_take_fork(t_philos *philo, int *res )
+{
+	struct timeval	tv;
+
+	pthread_mutex_lock(&philo->forks[philo->left_fork]);
+	gettimeofday(&tv, NULL);
+	philo->time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	*res = ft_custom_printf(philo, "has taken a fork");
+	pthread_mutex_lock(&philo->forks[philo->right_fork]);
+	gettimeofday(&tv, NULL);
+	philo->time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	*res = ft_custom_printf(philo, "has taken a fork");
+}
+
 int	ft_take_fork(t_philos *philo)
 {
-	struct timeval tv;
+	struct timeval	tv;
 	int				res;
 
 	res = 1;
 	if (philo->right_fork > philo->left_fork)
 	{
-		pthread_mutex_lock(&philo->forks[philo->left_fork]);
-		gettimeofday(&tv, NULL);
-		philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		res = ft_custom_printf(philo, "has taken a fork");
-		pthread_mutex_lock(&philo->forks[philo->right_fork]);
-		gettimeofday(&tv, NULL);
-		philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
-		res = ft_custom_printf(philo, "has taken a fork");
+		ft_help_take_fork(philo, &res);
 	}
 	else
 	{
 		pthread_mutex_lock(&philo->forks[philo->right_fork]);
 		gettimeofday(&tv, NULL);
-		philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+		philo->time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 		res = ft_custom_printf(philo, "has taken a fork");
 		pthread_mutex_lock(&philo->forks[philo->left_fork]);
 		gettimeofday(&tv, NULL);
-		philo->time = tv.tv_sec * 1000 + tv.tv_usec/1000;
+		philo->time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 		res = ft_custom_printf(philo, "has taken a fork");
 	}
 	return (res);

@@ -6,7 +6,7 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/12 14:24:53 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/12 14:29:47 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ int	main(int argc, char **argv)
 	data = (t_data *)malloc(sizeof(t_data));
 	data->count = ft_atoi(argv[1]);
 	data->forks = ft_create_forks(data->count);
-	data->philosophers = ft_create_philosophers(ft_atoi(argv[1]), data->forks, argv, argc, &entry_point);
+	data->philosophers = ft_create_philosophers(data, argv, argc, &entry_point);
 	ft_threads(data);
 	return (0);
 }

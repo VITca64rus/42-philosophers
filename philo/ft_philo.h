@@ -36,7 +36,7 @@ typedef struct s_data
 
 int	ft_atoi(const char *str);
 pthread_mutex_t *ft_create_forks(int count);
-t_philos	*ft_create_philosophers(int count, pthread_mutex_t *forks, char **argv, int argc, pthread_mutex_t *entry_point);
+t_philos	*ft_create_philosophers(t_data *data, char **argv, int argc, pthread_mutex_t *entry_point);
 void	ft_put_forks(t_philos *philo);
 int		ft_eat(t_philos *philo);
 int		ft_sleap(t_philos *philo);
