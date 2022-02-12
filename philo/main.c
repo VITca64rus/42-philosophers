@@ -6,56 +6,32 @@
 /*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 11:38:28 by sazelda           #+#    #+#             */
-/*   Updated: 2022/02/11 21:51:55 by sazelda          ###   ########.fr       */
+/*   Updated: 2022/02/12 14:24:53 by sazelda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_philo.h"
 
-// FIX_ME GLOBAL VARIABLES
-
-void castom_usleep(long time)
-{
-	struct timeval tv;
-	long time1;
-	gettimeofday(&tv, NULL);
-	time1 = tv.tv_sec * 1000 + tv.tv_usec/1000;
-	while (tv.tv_sec * 1000 + tv.tv_usec/1000 - time1 < time)
-	{
-		usleep(100);
-		gettimeofday(&tv, NULL);
-	}
-}
-
 void	*live(void *args)
 {
-	t_philos	*philo;
-	struct timeval tv;
-	int i = 0;
+	t_philos		*philo;
+	struct timeval	tv;
 
 	philo = (t_philos *)args;
 	gettimeofday(&tv, NULL);
-	philo->time_start = tv.tv_sec * 1000 + tv.tv_usec/1000;
+	philo->time_start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	philo->last_eat = philo->time_start;
 	if (philo->name % 2 == 0)
 		usleep(500);
 	while (!philo->stop)
 	{
 		if (ft_take_fork(philo) == 0)
-			break;
-		if (ft_eat(philo) == 0)
-			break;
-		if (ft_sleap(philo) == 0)
-			break;
-
-		//THINKING
-		if (philo->stop)
 			break ;
-		pthread_mutex_lock(philo->entry_point);
-		printf("%ld %d is thinking\n",  philo->time- philo->time_start, philo->name);
-		pthread_mutex_unlock(philo->entry_point);
-		
-		i++;
+		if (ft_eat(philo) == 0)
+			break ;
+		if (ft_sleap(philo) == 0)
+			break ;
+		ft_custom_printf(philo, "is thinking");
 	}
 	return (NULL);
 }
@@ -74,12 +50,9 @@ void	*moni(void *args)
 	{
 		pthread_mutex_lock(data->philosophers[i].entry_point);
 		j = 0;
-		while (j < data->count)
-		{
-			data->philosophers[j].stop = true;
-			j++;
-		}
+		data->philosophers[j].stop = true;
 		printf("%ld %d died\n",  data->philosophers[0].time_death, data->philosophers[0].name);
+		pthread_mutex_unlock(data->philosophers[i].entry_point);
 	}
 	while (((1)) && (data->count != 1))
 	{
@@ -152,78 +125,44 @@ void	*moni(void *args)
 	return(NULL);
 }
 
-int	ft_isdigit(int c)
+void	ft_threads(t_data	*data)
 {
-	if (c >= '0' && c <= '9')
-		return (1);
-	else
-		return (0);
-}
+	pthread_t		*threads;
+	pthread_t		monitor;
+	int				i;
 
-int	ft_check(int argc, char **argv)
-{
-	int i;
-	int j;
-
-	i = 1;
-	while (i < argc)
+	threads = (pthread_t *)malloc(sizeof(pthread_t) * data->count);
+	pthread_create(&monitor, NULL, moni, data);
+	i = 0;
+	while (i < data->count)
 	{
-		j = 0;
-		while (argv[i][j] != '\0')
-		{
-			if (ft_isdigit(argv[i][j]) == 0)
-				return (0);
-			j++;
-		}
+		pthread_create(&threads[i], NULL, live, &data->philosophers[i]);
 		i++;
 	}
-	return (1);
+	pthread_join(monitor, NULL);
+	i = 0;
+	while (i < data->count)
+	{
+		pthread_join(threads[i], NULL);
+		i++;
+	}
 }
 
 int	main(int argc, char **argv)
 {
-	
-	t_philos		*philosophers;
 	t_data			*data;
-	pthread_mutex_t *forks;
-	pthread_t 		*threads;
-	pthread_t 		monitor;
-	pthread_mutex_t entry_point = PTHREAD_MUTEX_INITIALIZER;
-	int				i;
-	
+	pthread_mutex_t	entry_point;
+
+	pthread_mutex_init(&entry_point, NULL);
 	if (argc < 5 || argc > 6 || ft_check(argc, argv) == 0)
 	{
 		printf("Error\n");
 		return (0);
 	}
-	forks = ft_create_forks(ft_atoi(argv[1]));
-	philosophers = ft_create_philosophers(ft_atoi(argv[1]), forks, argv, argc, &entry_point);
-	data = (t_data *)malloc(sizeof(data));
-	data->count=ft_atoi(argv[1]);
-	data->forks=forks;
-	data->philosophers = philosophers;
-	
 	data = (t_data *)malloc(sizeof(t_data));
 	data->count = ft_atoi(argv[1]);
-	data->forks = forks;
-	data->philosophers = philosophers;
-
-	threads = (pthread_t *)malloc(sizeof(pthread_t) * ft_atoi(argv[1])); //CHECK FIX_ME
-
-	pthread_create(&monitor, NULL, moni, data);
-	
-	i = 0;
-	while (i < ft_atoi(argv[1]))
-	{
-		pthread_create(&threads[i], NULL, live, &philosophers[i]);
-		i++;
-	}
-	pthread_join(monitor, NULL);
-	i = 0;
-	while (i < ft_atoi(argv[1]))
-	{
-		pthread_join(threads[i], NULL);
-		i++;
-	}
+	data->forks = ft_create_forks(data->count);
+	data->philosophers = ft_create_philosophers(ft_atoi(argv[1]), data->forks, argv, argc, &entry_point);
+	ft_threads(data);
 	return (0);
 }

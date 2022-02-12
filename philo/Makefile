@@ -1,7 +1,7 @@
 NAME = philo
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
-SRC  =  	main.c		ft_atoi.c		ft_create.c		ft_live.c
+SRC  =  	main.c		ft_atoi.c		ft_create.c		ft_live.c		ft_utils.c
 
 OBJ = $(patsubst %.c,%.o,$(SRC))
 INCLUDES = ft_philosophers.h

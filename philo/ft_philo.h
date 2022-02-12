@@ -42,5 +42,7 @@ int		ft_eat(t_philos *philo);
 int		ft_sleap(t_philos *philo);
 void 	castom_usleep(long time);
 int		ft_take_fork(t_philos *philo);
+int		ft_custom_printf(t_philos *philo, char *s);
+int		ft_check(int argc, char **argv);
 
 #endif

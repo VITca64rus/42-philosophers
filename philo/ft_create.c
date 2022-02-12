@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_create.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sazelda <sazelda@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/12 13:40:30 by sazelda           #+#    #+#             */
+/*   Updated: 2022/02/12 13:41:26 by sazelda          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_philo.h"
 
-pthread_mutex_t *ft_create_forks(int count)
+pthread_mutex_t	*ft_create_forks(int count)
 {
-	pthread_mutex_t *forks;
+	pthread_mutex_t	*forks;
 	int				i;
 
 	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * count);
